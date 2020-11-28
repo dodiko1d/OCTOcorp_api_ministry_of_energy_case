@@ -1,4 +1,3 @@
-#!/home/eee/ug/15084015/miniconda3/envs/TF/bin/python
 from subprocess import call
 import pdb
 import pandas as pd
