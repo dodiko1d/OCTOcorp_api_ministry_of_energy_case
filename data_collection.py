@@ -1,4 +1,5 @@
 import openpyxl
+import re
 
 
 class Data:
@@ -27,7 +28,39 @@ class Data:
                     data_sheet[year_value[year] + str(cell)].value
         except KeyError:
             "There's no such year"
-
         return regions_list[region_name]
 
+    def get_resourses_per_capita(self, year: str):
 
+        file = openpyxl.reader.excel.load_workbook(filename='resourses_per_capita.xlsx')
+
+        file.active = 0
+        sheet = file.active
+        data_list = {}
+
+        cell_number = {'2017': 'E', '2018': 'F'}
+
+        for cell in range(7, 16):
+            data_list[sheet['A' + str(cell)].value] = sheet[cell_number[year] + str(cell)].value
+
+        return data_list
+
+    def get_power_consumption(self):
+
+        with open('power_consumption.csv', 'r', encoding='utf-8') as f:
+            file = f.readlines()
+
+        indicators = []
+        for line in file:
+            s = line.split()[-1]
+            lst = s.replace(';', ' ').split()
+            indicators.append(lst[-1])
+
+        new_list = list(map(lambda x: float(re.sub('\W+', '', x)), indicators[1:]))
+        final_list = []
+        for element in new_list:
+            if element != 0:
+                final_list.append(element)
+            else:
+                pass
+        return final_list
