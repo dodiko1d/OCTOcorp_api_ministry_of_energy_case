@@ -7,18 +7,17 @@ from main import app
 client = TestClient(app)
 
 
-def test_product_creation():
+def test_city_data_getter():
     product_creation_params = {
             'id': 10,
-            'name': 'some product',
-            'group_id': 100,
+            'name': 'some prediction',
             'stock_balance': 10,
             'reserved_number': 2,
             'description': 'hello',
     }
 
     response = client.post(
-        '/product/create/',
+        '/prediction/create/',
         json=product_creation_params
     )
     assert response.json() == {'status_code': '200'}

@@ -9,8 +9,7 @@ from sqlalchemy.orm import sessionmaker
 # Project imports.
 from database import Base
 from main import app
-from products_group.router import get_db as products_group_get_db
-from product.router import get_db as product_get_db
+from prediction.router import get_db as product_get_db
 
 # Modules for database after-test deletion.
 import os
@@ -38,7 +37,6 @@ def override_get_db():
         db.close()
 
 
-app.dependency_overrides[products_group_get_db] = override_get_db
 app.dependency_overrides[product_get_db] = override_get_db
 
 
@@ -47,8 +45,7 @@ client = TestClient(app)
 
 
 # Import are specifically connected this way, to adding a new micro-apis add tests here.
-from products_group.tests import test_products_group_creation
-from product.tests import test_product_creation
+from prediction.tests import test_city_data_getter
 
 
 # Handler that deletes testing database every time tests finish to ensure you won't need rewrite tests.
