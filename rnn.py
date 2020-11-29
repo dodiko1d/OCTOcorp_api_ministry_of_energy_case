@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup
 seed(1)
 tensorflow.random.set_seed(2)
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # no tf shit warnings
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 def get_load_data(date):
