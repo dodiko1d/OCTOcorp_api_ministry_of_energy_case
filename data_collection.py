@@ -1,4 +1,5 @@
 import openpyxl
+import pandas as pd
 import re
 
 
@@ -47,22 +48,17 @@ class Data:
 
     def get_power_consumption(self):
 
-        with open('power_consumption.csv', 'r', encoding='utf-8') as f:
-            file = f.readlines()
+       raw_df = pd.read_csv('consumption_data.csv',
+                             sep=';',
+                             header=0,
+                             usecols=['M_DATE', 'E_USE_FACT', 'E_USE_PLAN'],
+                             infer_datetime_format=True,
+                             )
 
-        indicators = []
-        for line in file:
-            s = line.split()[-1]
-            lst = s.replace(';', ' ').split()
-            indicators.append(lst[-1])
-
-        new_list = list(map(lambda x: float(re.sub('\W+', '', x)), indicators[1:]))
-        final_list = []
-        for element in new_list:
-            if element != 0:
-                final_list.append(element)
-            else:
-                pass
-        return final_list
-
+        # In original dataset intervals between measurements are kept in separate column
+        # but specific time of each measurement isn't specified.
+        # Therefore it's necessary to construct datetime column manually.
+        raw_df['M_DATE'] = pd.to_datetime(raw_df['M_DATE']) \
+                                + pd.to_timedelta(raw_df.index % 24, unit='H')
+        return raw_df
 
