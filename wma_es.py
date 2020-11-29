@@ -18,7 +18,7 @@ data = pd.read_csv(
     parse_dates=["datetime"],
     infer_datetime_format=True,
 )
-# import pdb; pdb.set_trace()
+
 print(data.index[-1])
 date = datetime.today().date().strftime("%d-%m-%Y")
 print('date today:', date)
