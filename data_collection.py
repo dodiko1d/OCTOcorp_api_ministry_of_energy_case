@@ -1,15 +1,10 @@
 import openpyxl
 import pandas as pd
-import re
 
 
 class Data:
     def get_gdp(self, region_name: str, year: str):
-
-        wb = openpyxl.reader.excel.load_workbook(filename='vrp_region.xlsx')
-        wb.active = 0
-        data_sheet = wb.active
-
+        sheet = self.xlxs_opener('vrp_region.xlsx')
         year_value = {
             '2010': 'B',
             '2011': 'C',
@@ -25,20 +20,15 @@ class Data:
         regions_list = {}
         try:
             for cell in range(5, 102):
-                regions_list[data_sheet['A' + str(cell)].value] = \
-                    data_sheet[year_value[year] + str(cell)].value
+                regions_list[sheet['A' + str(cell)].value] = \
+                    sheet[year_value[year] + str(cell)].value
         except KeyError:
             "There's no such year"
         return regions_list[region_name]
 
     def get_resourses_per_capita(self, year: str):
-
-        file = openpyxl.reader.excel.load_workbook(filename='resourses_per_capita.xlsx')
-
-        file.active = 0
-        sheet = file.active
+        sheet = self.xlxs_opener('resourses_per_capita.xlsx')
         data_list = {}
-
         cell_number = {'2017': 'E', '2018': 'F'}
 
         for cell in range(7, 16):
@@ -46,9 +36,15 @@ class Data:
 
         return data_list
 
+    def xlxs_opener(self, file_name):
+        wb = openpyxl.reader.excel.load_workbook(filename=file_name)
+        wb.active = 0
+        data_sheet = wb.active
+        return data_sheet
+
     def get_power_consumption(self):
 
-       raw_df = pd.read_csv('consumption_data.csv',
+        raw_df = pd.read_csv('consumption_data.csv',
                              sep=';',
                              header=0,
                              usecols=['M_DATE', 'E_USE_FACT', 'E_USE_PLAN'],
@@ -59,6 +55,18 @@ class Data:
         # but specific time of each measurement isn't specified.
         # Therefore it's necessary to construct datetime column manually.
         raw_df['M_DATE'] = pd.to_datetime(raw_df['M_DATE']) \
-                                + pd.to_timedelta(raw_df.index % 24, unit='H')
+                           + pd.to_timedelta(raw_df.index % 24, unit='H')
         return raw_df
+
+    def get_urbanization(self):
+        f = pd.read_csv('urbanization.csv',
+                        sep=',',
+                        header=0,
+                        usecols=['YEAR', 'REGION', 'INDICATOR'],
+                        infer_datetime_format=True)
+        f['YEAR'] = pd.DataFrame(f['YEAR'])
+
+        return f
+
+
 
